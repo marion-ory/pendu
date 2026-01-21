@@ -1,11 +1,19 @@
-# Couleurs (HEX), polices, tailles d'écran
+import pygame
 
-
-HAUTEUR = 600
-LARGEUR = 800
-
-# couleurs:
-
-ECRAN = "green"
+HEIGHT = 600
+WIDTH = 800
+SCREEN_COLOR = (30, 80, 30)
 WHITE = (255, 255, 255)
-BLEU = "blue"
+BLUE = (50, 100, 200)
+RED = (150, 0, 0)
+GOLD = (255, 215, 0)
+GREEN = (50, 200, 50)
+
+BTN_WIDTH = 250
+BTN_HEIGHT = 50
+X_CENTER = (WIDTH // 2) - (BTN_WIDTH // 2)
+
+RECT_PLAY = pygame.Rect(X_CENTER, 250, BTN_WIDTH, BTN_HEIGHT)
+RECT_ADD_WORD = pygame.Rect(X_CENTER, 320, BTN_WIDTH, BTN_HEIGHT)
+RECT_QUIT = pygame.Rect(X_CENTER, 390, BTN_WIDTH, BTN_HEIGHT)
+RECT_BACK = pygame.Rect(X_CENTER, 450, BTN_WIDTH, BTN_HEIGHT)
