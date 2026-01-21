@@ -1,13 +1,18 @@
 import logique
 import datetime
 import time
-from ui.screen_manager import *
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from ui.screen_manager import setup, afficher_menu, afficher_jeu, afficher_saisie_mot
 from ui.constant import *
+import ui.screen_manager as sm
 
 
 # initialisation :
 
-screen = setup()
+screen = sm.setup()
 clock = pygame.time.Clock()
 running = True
 ecran_actuel = "MENU"  # On commence sur le menu
@@ -109,7 +114,10 @@ while running:
     if ecran_actuel == "MENU":
         afficher_menu(screen)
     elif ecran_actuel == "JEU":
-        screen.fill(ECRAN)
+        # On appelle la nouvelle fonction avec TOUTES les infos nécessaires
+        afficher_jeu(
+            screen, mot_a_deviner, logique.lettre_trouve, logique.compteur_erreur
+        )
     elif ecran_actuel == "AJOUT_MOT":
         screen.fill(ECRAN)
 

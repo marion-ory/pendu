@@ -1,8 +1,8 @@
 # Couleurs (HEX), polices, tailles d'écran
 
 
-HAUTEUR = 1280
-LARGEUR = 720
+HAUTEUR = 600
+LARGEUR = 800
 
 # couleurs:
 

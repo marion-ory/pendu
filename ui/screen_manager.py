@@ -1,77 +1,54 @@
 import pygame
-from ui.constant import *
+from constant import *
+from drawer import dessiner_pendu
+import logique
 
 
-def setup():
-    pygame.init()
-    screen = pygame.display.set_mode((LARGEUR, HAUTEUR))
-    pygame.display.set_caption("Jeu du Pendu - Bachelor IA")
-    return screen
-
-
-def afficher_menu(surface):
+def afficher_jeu(surface, mot_a_deviner, lettres_trouvees, erreurs):
     surface.fill(ECRAN)
 
-    # 1. Définition des zones des boutons (x, y, largeur, hauteur)
-    rect_jouer = pygame.Rect(LARGEUR // 2 - 100, 200, 200, 50)
-    rect_ajouter = pygame.Rect(LARGEUR // 2 - 100, 300, 200, 50)
-    rect_quitter = pygame.Rect(LARGEUR // 2 - 100, 400, 200, 50)
+    # 1. Dessiner le pendu (via drawer.py)
+    dessiner_pendu(surface, erreurs)
 
-    # 2. Dessin des rectangles (Boutons)
-    pygame.draw.rect(surface, WHITE, rect_jouer)
-    pygame.draw.rect(surface, WHITE, rect_ajouter)
-    pygame.draw.rect(surface, WHITE, rect_quitter)
+    # 2. Afficher le mot avec underscores
+    font_mot = pygame.font.SysFont("Arial", 60)
+    # On utilise ta fonction logique pour avoir le "P _ T H _ N"
+    mot_visuel = logique.affciher_mot(mot_a_deviner, lettres_trouvees)
 
-    # 3. Création de la police
-    font = pygame.font.SysFont("Arial", 24)
+    img_mot = font_mot.render(mot_visuel, True, WHITE)
+    # On place le mot à droite du pendu
+    rect_mot = img_mot.get_rect(center=(LARGEUR // 2 + 100, HAUTEUR // 2))
+    surface.blit(img_mot, rect_mot)
 
-    # 4. Création des images de texte (Render)
-    txt_jouer = font.render("1 - JOUER", True, BLEU)
-    txt_ajouter = font.render("2 - AJOUTER", True, BLEU)
-    txt_quitter = font.render("3 - QUITTER", True, BLEU)
-
-    # 5. Affichage des textes sur les boutons (Blit)
-    # On utilise center pour que le texte soit parfaitement au milieu du rectangle
-    surface.blit(txt_jouer, txt_jouer.get_rect(center=rect_jouer.center))
-    surface.blit(txt_ajouter, txt_ajouter.get_rect(center=rect_ajouter.center))
-    surface.blit(txt_quitter, txt_quitter.get_rect(center=rect_quitter.center))
-
-
-def afficher_jeu(surface, mot_a_deviner, lettres_trouvees):
-    surface.fill(ECRAN)
-
-    font = pygame.font.SysFont("Arial", 50)
-
-    # 1. On récupère la chaîne de caractères (ex: "B _ C H _ L _ R")
-    from logique import affciher_mot
-
-    texte_mot = affciher_mot(mot_a_deviner, lettres_trouvees)
-
-    # 2. Création de l'image du texte
-    img_mot = font.render(texte_mot, True, WHITE)
-
-    # 3. On centre le texte au milieu de l'écran (720x1280 selon tes constantes)
-    rect_texte = img_mot.get_rect(center=(LARGEUR // 2, HAUTEUR // 2))
-    surface.blit(img_mot, rect_texte)
+    # 3. Afficher le compteur d'erreurs pour info
+    font_info = pygame.font.SysFont("Arial", 24)
+    txt_erreurs = font_info.render(f"Erreurs : {erreurs} / 7", True, WHITE)
+    surface.blit(txt_erreurs, (20, 20))
 
 
 def afficher_saisie_mot(surface, mot_en_cours):
     surface.fill(ECRAN)
-    font = pygame.font.SysFont("Arial", 30)
+    font = pygame.font.SysFont("Arial", 40)
 
-    # Message d'instruction
-    titre = font.render("Tapez le nouveau mot :", True, WHITE)
-    surface.blit(titre, (50, 100))
+    # 1. Message d'instruction
+    texte_titre = font.render("Nouveau mot :", True, WHITE)
+    surface.blit(texte_titre, (LARGEUR // 2 - 100, HAUTEUR // 4))
 
-    # Affichage de ce que l'utilisateur tape
-    img_saisie = font.render(mot_en_cours, True, BLEU)
-    surface.blit(img_saisie, (50, 200))
+    # 2. Affichage du mot que l'utilisateur est en train de taper
+    # On ajoute un curseur "_" à la fin pour le style
+    image_saisie = font.render(mot_en_cours + "_", True, WHITE)
+    rect_saisie = image_saisie.get_rect(center=(LARGEUR // 2, HAUTEUR // 2))
 
-    # Aide en bas
-    aide = font.render("Appuyez sur ENTREE pour valider", True, WHITE)
-    surface.blit(aide, (50, 400))
+    # On dessine un rectangle pour souligner la saisie
+    pygame.draw.rect(
+        surface,
+        WHITE,
+        (rect_saisie.x - 10, rect_saisie.y + 50, rect_saisie.width + 20, 2),
+        2,
+    )
+    surface.blit(image_saisie, rect_saisie)
 
-
-# def afficher_score(surface, donnees_partie):
-
-# def afficher_resultat(surface, gagne, score):
+    # 3. Aide en bas
+    font_aide = pygame.font.SysFont("Arial", 20)
+    aide = font_aide.render("Appuyez sur ENTREE pour valider", True, WHITE)
+    surface.blit(aide, (LARGEUR // 2 - 120, HAUTEUR - 100))
