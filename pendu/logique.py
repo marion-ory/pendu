@@ -19,8 +19,11 @@ def display_word(word_to_guess, found_letters):
             result += "_ "
     return result.strip()
 
-def get_difficulty(word_to_guess):
-    length = len(word_to_guess)
-    if length <= 6: return "Easy", 5
-    elif 6 < length < 12: return "Medium", 10
-    else: return "Hard", 15
+def filter_words_by_difficulty(word_list, difficulty):
+    if difficulty == "EASY":
+        return [w for w in word_list if len(w) <= 6]
+    elif difficulty == "MEDIUM":
+        return [w for w in word_list if 7 <= len(w) <= 10]
+    elif difficulty == "HARD":
+        return [w for w in word_list if len(w) > 10]
+    return word_list

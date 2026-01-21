@@ -6,7 +6,7 @@ from pendu import logique
 def draw_button(surface, text, rect, bg_color):
     pygame.draw.rect(surface, bg_color, rect, border_radius=10)
     pygame.draw.rect(surface, WHITE, rect, 2, border_radius=10)
-    font = pygame.font.SysFont("Arial", 30, bold=True)
+    font = pygame.font.SysFont("Arial", 22, bold=True)
     img_txt = font.render(text, True, WHITE)
     surface.blit(img_txt, img_txt.get_rect(center=rect.center))
 
@@ -16,28 +16,42 @@ def setup():
 
 def display_menu(surface, highscore):
     surface.fill(SCREEN_COLOR)
+    
+    # Titre et Record
     font_title = pygame.font.SysFont("Arial", 80, bold=True)
     img_title = font_title.render("HANGMAN", True, WHITE)
-    surface.blit(img_title, img_title.get_rect(center=(WIDTH // 2, 100)))
+    surface.blit(img_title, img_title.get_rect(center=(WIDTH // 2, 80)))
     
     font_record = pygame.font.SysFont("Arial", 30, bold=True)
     img_record = font_record.render(f"BEST SCORE: {highscore}", True, GOLD)
-    surface.blit(img_record, img_record.get_rect(center=(WIDTH // 2, 180)))
+    surface.blit(img_record, img_record.get_rect(center=(WIDTH // 2, 160)))
 
-    draw_button(surface, "PLAY", RECT_PLAY, BLUE)
-    draw_button(surface, "ADD WORD", RECT_ADD_WORD, BLUE)
-    draw_button(surface, "QUIT", RECT_QUIT, RED)
+    # Boutons de difficulté (espacement de 55px entre chaque)
+    draw_button(surface, "EASY (<= 6)", pygame.Rect(X_CENTER, 220, BTN_WIDTH, 45), (50, 150, 50))
+    draw_button(surface, "MEDIUM (7-10)", pygame.Rect(X_CENTER, 275, BTN_WIDTH, 45), (150, 150, 50))
+    draw_button(surface, "HARD (> 10)", pygame.Rect(X_CENTER, 330, BTN_WIDTH, 45), (150, 50, 50))
+    
+    # Boutons utilitaires (descendus pour laisser de la place)
+    draw_button(surface, "ADD WORD", pygame.Rect(X_CENTER, 400, BTN_WIDTH, 45), BLUE)
+    draw_button(surface, "QUIT", pygame.Rect(X_CENTER, 455, BTN_WIDTH, 45), RED)
 
 def display_game(surface, word, letters, errors, score, elapsed_time):
     surface.fill(SCREEN_COLOR)
     draw_hangman(surface, errors)
-    font_info = pygame.font.SysFont("Arial", 30, bold=True)
-    surface.blit(font_info.render(f"Errors: {errors} / 7", True, WHITE), (30, 30))
-    surface.blit(font_info.render(f"Score: {score}", True, WHITE), (30, 70))
-    surface.blit(font_info.render(f"Time: {elapsed_time}s", True, GOLD), (30, 110))
+    font_info = pygame.font.SysFont("Arial", 25, bold=True)
+    surface.blit(font_info.render(f"Errors: {errors} / 7", True, WHITE), (20, 20))
+    surface.blit(font_info.render(f"Score: {score}", True, WHITE), (20, 55))
+    surface.blit(font_info.render(f"Time: {elapsed_time}s", True, GOLD), (20, 90))
     
-    font_word = pygame.font.SysFont("Arial", 70, bold=True)
-    img_word = font_word.render(logique.display_word(word, letters), True, WHITE)
+    display_txt = logique.display_word(word, letters)
+    font_size = 70
+    test_font = pygame.font.SysFont("Arial", font_size, bold=True)
+    
+    while test_font.size(display_txt)[0] > (WIDTH - 60) and font_size > 20:
+        font_size -= 5
+        test_font = pygame.font.SysFont("Arial", font_size, bold=True)
+        
+    img_word = test_font.render(display_txt, True, WHITE)
     surface.blit(img_word, img_word.get_rect(center=(WIDTH // 2, HEIGHT - 100)))
 
 def display_victory(surface, score, time_spent):
@@ -47,12 +61,10 @@ def display_victory(surface, score, time_spent):
     surface.blit(img, img.get_rect(center=(WIDTH // 2, 150)))
     
     font_stats = pygame.font.SysFont("Arial", 40)
-    img_score = font_stats.render(f"Final Score: {score}", True, WHITE)
-    img_time = font_stats.render(f"Time: {time_spent}s", True, WHITE)
+    surface.blit(font_stats.render(f"Final Score: {score}", True, WHITE), font_stats.render(f"Final Score: {score}", True, WHITE).get_rect(center=(WIDTH // 2, 250)))
+    surface.blit(font_stats.render(f"Time: {time_spent}s", True, WHITE), font_stats.render(f"Time: {time_spent}s", True, WHITE).get_rect(center=(WIDTH // 2, 310)))
     
-    surface.blit(img_score, img_score.get_rect(center=(WIDTH // 2, 250)))
-    surface.blit(img_time, img_time.get_rect(center=(WIDTH // 2, 310)))
-    draw_button(surface, "BACK TO MENU", RECT_BACK, BLUE)
+    draw_button(surface, "BACK TO MENU", pygame.Rect(X_CENTER, 420, BTN_WIDTH, 50), BLUE)
 
 def display_game_over(surface, correct_word):
     surface.fill((50, 0, 0))
@@ -62,8 +74,8 @@ def display_game_over(surface, correct_word):
     
     font_m = pygame.font.SysFont("Arial", 30)
     img_m = font_m.render(f"The word was: {correct_word}", True, WHITE)
-    surface.blit(img_m, img_m.get_rect(center=(WIDTH // 2, 250)))
-    draw_button(surface, "BACK TO MENU", RECT_BACK, BLUE)
+    surface.blit(img_m, img_m.get_rect(center=(WIDTH // 2, 260)))
+    draw_button(surface, "BACK TO MENU", pygame.Rect(X_CENTER, 420, BTN_WIDTH, 50), BLUE)
 
 def display_add_word(surface, current_input):
     surface.fill(SCREEN_COLOR)
