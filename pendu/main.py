@@ -11,7 +11,7 @@ screen = setup()
 clock = pygame.time.Clock()
 running = True
 ecran_actuel = "MENU"  # On commence sur le menu
-
+nom_joueur = "Joueur 1"
 # BOUCLE JEU
 # while True:
 while running:
@@ -20,13 +20,12 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        # --- GESTION DES INPUTS CLAVIER ---
-        if event.type == pygame.KEYDOWN:  # detecte le clavier
+        # --- GESTION CLAVIER ---
+        if event.type == pygame.KEYDOWN:
 
             # CAS 1 : DEPUIS LE MENU
             if ecran_actuel == "MENU":
                 if event.key == pygame.K_1:  # jouer 1 correspond au print("1 - Jouer")
-                    # L'ouverture du fichier doit être dans le case 1 (Adapté ici pour Pygame)
                     with open("mot.txt", "r", encoding="utf-8") as fichier:
                         liste_mot = fichier.read().splitlines()
 
@@ -72,19 +71,49 @@ while running:
                     choix_lettre = event.unicode.upper()  # Tapez une lettre
                     logique.verifier_lettre(choix_lettre, mot_a_deviner)
 
-                    # Note : La vérification Victoire/Défaite (score, chrono, scores.txt) se fera ici
+                    # --- VERIFICATION DEFAITE (7 ERREURS) ---
+                    if logique.compteur_erreur >= 7:
+                        fin_chronometre = time.time()
+                        temps_total = round(
+                            fin_chronometre - debut_chronometre, 2
+                        )  # Chrono total si perdu
+                        print(f"Perdu... Le mot était : {mot_a_deviner}")
+                        print(f"Temps de jeu : {temps_total}s")
+                        ecran_actuel = "MENU"
+
+                    # --- VERIFICATION VICTOIRE ---
+                    else:
+                        affichage = logique.affciher_mot(
+                            mot_a_deviner, logique.lettre_trouve
+                        )
+                        if "_" not in affichage:
+                            fin_chronometre = time.time()
+                            temps_total = round(
+                                fin_chronometre - debut_chronometre, 2
+                            )  # Chrono total si gagné
+
+                        # score final
+                        score_final, bonus = logique.chrono_score(points, temps_total)
+
+                        with open(
+                            "scores.txt", "a", encoding="utf-8"
+                        ) as f_scores:  # ajout dans score.TXT
+                            f_scores.write(
+                                f"Joueur : {nom_joueur}, Niveau: {mon_niveau}, Score : {score_final}, Bonus : {bonus}, Temps : {temps_total}s, le : {logique.date_actuelle}\n"
+                            )
+
+                        print(f"Gagné en {temps_total}s !")
+                        ecran_actuel = "MENU"
 
     # --- PARTIE AFFICHAGE ---
     if ecran_actuel == "MENU":
         afficher_menu(screen)
     elif ecran_actuel == "JEU":
-        # Ici on appelle le dessin du jeu
         screen.fill(ECRAN)
     elif ecran_actuel == "AJOUT_MOT":
-        # Ici on affiche la saisie du nouveau mot
         screen.fill(ECRAN)
 
-    pygame.display.flip()  # Mise à jour de l'affichage
+    pygame.display.flip()
 
 pygame.quit()
 
