@@ -1,0 +1,5 @@
+Joueur 1 - 30 pts - 8.68s
+Date: 2026-01-21 19:13, Score: 55, Time: 12.74s
+Date: 2026-01-21 19:26, Score: 95, Time: 9.33s
+Date: 2026-01-22 19:50, Score: 10, Time: 2.89s
+Date: 2026-01-23 00:09, Score: 35, Time: 13.56s
